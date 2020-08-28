@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>EzWebEx for Desktop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha512-MoRNloxbStBcD8z3M/2BmnT+rg4IsMxPkXaGh2zD6LGNNFE80W3onsAhRcMAMrSoyWL9xD7Ert0men7vR8LUZg==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="./assets/css/footer-basic.css">
+  </head>
+  <body>
+      <div class="container mt-3" id="login_screen">
+          <div class="row text-center">
+              <div class="col-sm-11 col-md-11 col-xl-8 offset-sm-1 offset-md-1 offset-xl-2 text-left">
+                  <div class="card">
+                      <div class="card-body">
+                          <form id="login">
+                              <h1 class="card-title">로그인</h1>
+                              <p class="card-subtitle text-muted mb-4">계속하려면, 가천대학교 포털 아이디와 비밀번호를 입력하세요.</p>
+                              <div id="login_notify">
+
+                              </div>
+                              <input id="username" class="form-control mb-2" type="text" placeholder="아이디" autocomplete="username" />
+                              <input id="password" class="form-control mb-2" type="password" placeholder="비밀번호" autocomplete="password"/>
+                              <button class="btn btn-primary form-control mb-4">로그인</button>
+                              <p class="text-muted mt-2">안심하세요! 아이디 비밀번호와 세션 정보는 이 컴퓨터에만 저장되며 <br><b>가천대학교 출석체크 서버에 로그인 하는 용도 외로는 사용되지 않습니다.</b></p>
+                          </form>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <div id="timetable_screen" style="display: none;">
+          <div class="container mt-3" id="login_screen">
+            <p>환영합니다! <span class="gachon_name">{성명}</span>님!</p>
+            <h1 class="heading-3" id="timetable_date">2020년 12월 31일</h1>
+            <p><a href="javascript:goPrevDate()">이전</a> 
+              <a href="javascript:goNextDate()">다음</a> / <a href="javascript:refreshThisDate()">새로고침</a></p>
+            
+            <div id="timetable_status">
+
+            </div>
+
+            <table id="timetable_table" class="table">
+              <thead class="thead-dark">
+                <tr>
+                  <td>과목 이름</td>
+                  <td>교수님 성함</td>
+                  <td>시작 시각</td>
+                  <td>종료 시각</td>
+                  <td>접속 링크</td>
+                </tr>
+              </thead>
+              <tbody id="timetable_tbody">
+
+              </tbody>
+            </table>
+          </div>
+      </div>
+
+      <footer class="footer-basic">
+          <p class="copyright">Codename EZWebEx<br />Version. 0.0.1-BETA</p>
+      </footer>
+  </body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha512-M5KW3ztuIICmVIhjSqXe01oV2bpe248gOxqmlcYrEzAvws7Pw3z6BK0iGbrwvdrUQUhi3eXgtxp5I8PDo9YfjQ==" crossorigin="anonymous"></script>
+  <script>
+    let loggedIn = false;
+
+    const host = "http://localhost:21515";
+    const ezwebexHost = "https://webex.g-c.kr";
+
+    const loginForm = document.getElementById("login");
+    const loginFormUsername = document.getElementById("username");
+    const loginFormPassword = document.getElementById("password");
+
+    const loginScreen = document.getElementById("login_screen");
+    const timetableScreen = document.getElementById("timetable_screen");
+
+    const timetableStatus = document.getElementById("timetable_status");
+
+    const credentials = {};
+    let userData = {};
+
+    let currentDate = new Date();
+
+    loginForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        credentials.username = loginFormUsername.value;
+        credentials.password = loginFormPassword.value;
+
+        requestGachonLogin(credentials);
+    });
+
+    function signingIn() {
+      loggedIn = true;
+
+      loginScreen.style.display = "none";
+      timetableScreen.style.display = "block";
+
+      const names = document.getElementsByClassName("gachon_name");
+      for (const name of names) {
+        name.innerHTML = userData.name;
+      }
+    }
+
+    function signingOut() {
+      loggedIn = false;
+
+      loginScreen.style.display = "block";
+      timetableScreen.style.display = "none";
+    }
+
+    let loggingIn = false;
+    async function requestGachonLogin(credentials) {
+        if (loggingIn) return;
+        loggingIn = true;
+
+        const username = encodeURIComponent(credentials.username);
+        const password = encodeURIComponent(credentials.password);
+
+        const notifyDiv = document.getElementById("login_notify");
+        notifyDiv.innerHTML = `
+        <div class="alert alert-primary" role="alert">가천대학교 출석체크 서버와 연결 중입니다. 잠시만 기다려 주세요.</div>
+        `
+
+        try {
+          const response = await fetch(`${host}/login?username=${username}&password=${password}`, {
+              method: 'GET',
+              credentials: 'include',
+          });
+
+          const json = await response.json();
+
+          if (!json.success) throw new Error("아이디나 비밀번호가 일치하지 않습니다.");
+
+          userData = json.userData;
+          console.log("Login!", userData);
+
+          signingIn();
+
+          requestGachonTimetable(currentDate);
+
+        } catch(e) {
+          alert(e);
+        }
+
+        notifyDiv.innerHTML = "";
+        loggingIn = false;
+    }
+
+    let isLoadingTimetable = false;
+    async function requestGachonTimetable(date) {
+        if (isLoadingTimetable) {
+          alert("시간표를 불러오는 중 입니다. 잠시만 기다려 주세요.");
+          return;
+        }
+        isLoadingTimetable = true;
+
+        timetableStatus.innerHTML = `
+        <div class="alert alert-warning" role="alert">가천대학교 출석체크 서버에서 오늘 시간표를 동기화 받는 중 입니다. 잠시만 기다려 주세요.</div>
+        `
+
+        const dateString = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+        const koDateString = `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+
+        try {
+          const response = await fetch(`${host}/timetable/${dateString}`, {
+              method: 'GET',
+              credentials: 'include',
+          });
+
+          const json = await response.json();
+
+          if (!json.success) throw new Error("로그아웃 되었습니다. 다시 로그인 하세요.");
+
+          timetableData = json.data;
+
+          console.log("Timetable", date, timetableData);
+
+          let tableData = "";
+
+          if (timetableData.length > 0) {
+            for (const table of timetableData) {
+              let professorLink = "";
+
+              try {
+                const tempRes = await fetch(ezwebexHost+"/api/get_link.php?code="+table.professorCode);
+                const json = await tempRes.json();
+
+                professorLink = json.data;
+              } catch(e) {
+                professorLink = "";
+              }
+
+              let linkShow = "";
+
+              if (professorLink === "" || professorLink === undefined) {
+                linkShow = `<a href="#" onclick="callBrowser('${ezwebexHost}/registerCode.php?code=${table.professorCode}&name=${table.professorName}')">링크 등록</a>`;
+              } else {
+                linkShow = `<a href="#" onclick="callBrowser('${professorLink}')">접속</a>`;
+              }
+
+              tableData += `
+              <tr>
+                <td>${table.name}</td>
+                <td>${table.professorName}</td>
+                <!-- Professor Code: ${table.professorCode} -->
+                <td>${table.startTime.substr(0,2)}:${table.startTime.substr(2,2)}</td>
+                <td>${table.endTime.substr(0,2)}:${table.endTime.substr(2,2)}</td>
+                <td>${linkShow}</td>
+              </tr>
+              `
+            }
+          } else {
+            tableData = "<tr><td colspan='5'>오늘은 수업이 없습니다.</td></tr>";
+          }
+          
+
+
+          document.getElementById('timetable_tbody').innerHTML = tableData;
+
+          document.getElementById('timetable_date').innerHTML = koDateString;
+          currentDate = date;
+          isLoadingTimetable = false;
+
+          timetableStatus.innerHTML = "";
+
+          return timetableData;
+
+        } catch(e) {
+          alert(e);
+          signingOut();
+
+          timetableStatus.innerHTML = "";
+
+          isLoadingTimetable = false;
+        }
+    }
+
+    async function goPrevDate() {
+      await requestGachonTimetable(new Date(currentDate.setDate(currentDate.getDate()-1)));
+    }
+
+    async function goNextDate() {
+      await requestGachonTimetable(new Date(currentDate.setDate(currentDate.getDate()+1)));
+    }
+
+    async function refreshThisDate() {
+      await requestGachonTimetable(currentDate);
+    }
+
+    async function callBrowser(url) {
+      await fetch(host+"/shell/"+encodeURIComponent(url));
+    }
+
+
+  </script>
+</html>
