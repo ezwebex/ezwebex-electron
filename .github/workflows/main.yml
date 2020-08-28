@@ -34,6 +34,9 @@ jobs:
       - name: Install all dependencies
         run: yarn
       
+      - name: Run typescript compile
+        run: yarn tsc
+      
       - name: Compiling!
         run: yarn package
     
@@ -65,6 +68,9 @@ jobs:
 
       - name: Install all dependencies
         run: yarn
+
+      - name: Run typescript compile
+        run: yarn tsc
 
       - name: Compiling!
         run: yarn package
@@ -98,6 +104,9 @@ jobs:
       - name: Install all dependencies
         run: yarn
 
+      - name: Run typescript compile
+        run: yarn tsc
+        
       - name: Compiling!
         run: yarn package
 
