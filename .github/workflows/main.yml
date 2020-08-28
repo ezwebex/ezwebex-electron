@@ -13,9 +13,9 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  build_win32:
     # The type of runner that the job will run on
-    runs-on: [ ubuntu-latest, windows-latest, macos-latest ]
+    runs-on: windows-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -40,7 +40,72 @@ jobs:
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.1.4
         with:
+          name: win32 build 
           # A file, directory or wildcard pattern that describes what to upload
           path: ./out/
           # The desired behavior if no files are found using the provided path
-        
+  
+  build_macos:
+    # The type of runner that the job will run on
+    runs-on: macos-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v1.4.3
+        with:
+          # Version Spec of the version to use.  Examples: 10.x, 10.15.1, >=10.15.0
+          node-version: 12.x
+
+      - name: Install yarn
+        run: npm install -g yarn
+
+      - name: Install all dependencies
+        run: yarn
+
+      - name: Compiling!
+        run: yarn package
+
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v2.1.4
+        with:
+          name: macOS Build 
+          # A file, directory or wildcard pattern that describes what to upload
+          path: ./out/
+          # The desired behavior if no files are found using the provided path
+
+  build_linux:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v1.4.3
+        with:
+          # Version Spec of the version to use.  Examples: 10.x, 10.15.1, >=10.15.0
+          node-version: 12.x
+
+      - name: Install yarn
+        run: npm install -g yarn
+
+      - name: Install all dependencies
+        run: yarn
+
+      - name: Compiling!
+        run: yarn package
+
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v2.1.4
+        with:
+          name: Ubuntu Build 
+          # A file, directory or wildcard pattern that describes what to upload
+          path: ./out/
+          # The desired behavior if no files are found using the provided path
+
