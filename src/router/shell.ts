@@ -7,5 +7,9 @@ export function registerShellRouter(app: Application) {
   app.get('/shell/:request', async (req, res) => {
     const request = req.params.request;
     shell.openExternal(request);
+
+    res.send({
+      success: true
+    });
   });
 }
