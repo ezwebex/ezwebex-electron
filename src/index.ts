@@ -1,6 +1,8 @@
-import { app, BrowserWindow, Notification } from 'electron';
+import { app, BrowserWindow, Notification, shell, Menu } from 'electron';
 import path from 'path';
 import cors from 'cors';
+
+import process from 'process';
 
 import crypto from 'crypto';
 
@@ -14,16 +16,49 @@ import { registerShellRouter } from './router/shell';
 
 axiosCookieJarSupport(axios);
 
+const isMac = process.platform === 'darwin';
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
   app.quit();
 }
+
+const menu = [
+    {
+      label: app.name,
+      submenu: [
+        {
+          role: "about"
+        },
+        {
+          label: "GitHub Repository",
+          click: () => {
+            shell.openExternal("https://github.com/ezwebex/ezwebex-electron")
+          }
+        },
+        {
+          type: "seperator"
+        },
+        {
+          role: "close"
+        },
+        {
+          role: "quit"
+        }
+      ]
+    }
+  ];
+
+// typescript, typing done WRONG, AGAIN.
+const electronMenu = isMac ? Menu.buildFromTemplate(menu as any) : null;
+Menu.setApplicationMenu(electronMenu);
 
 const createWindow = (): void => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     height: 600,
     width: 800,
+    
   });
 
   // and load the index.html of the app.
