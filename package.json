@@ -2,7 +2,7 @@
   "name": "ezwebex-electron",
   "productName": "ezwebex-electron",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "Easy to use Student Experience for Cisco Webex®, Now extended to Windows, macOS, Linux Platforms!",
   "main": "dist/index.js",
   "scripts": {
     "start": "tsc && electron-forge start",
@@ -19,23 +19,43 @@
   "license": "MIT",
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "icon": "./res/icon/ezwebex-icon.png"
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "ezwebex_electron"
+            "name": "ezwebex_electron",
+            "iconUrl": "./res/icon/ezwebex-icon.ico"
           }
         },
         {
-          "name": "@electron-forge/maker-zip",
+          "name": "@electron-forge/maker-dmg",
           "platforms": [
             "darwin"
-          ]
+          ],
+          "config": {
+            "additionalDMGOptions": {
+              "window": {
+                "size": {
+                  "width": 560,
+                  "height": 560
+                }
+              }
+            },
+            "icon": "./res/icon/ezwebex-icon.icns",
+            "background": "./res/macOS/installation-background.tiff",
+            "loadingGif": "./res/macOS/installing.gif"
+          }
         },
         {
           "name": "@electron-forge/maker-deb",
-          "config": {}
+          "config": {
+          },
+          "platforms": [
+
+          ]
         },
         {
           "name": "@electron-forge/maker-rpm",
@@ -47,6 +67,7 @@
   "devDependencies": {
     "@electron-forge/cli": "6.0.0-beta.53",
     "@electron-forge/maker-deb": "6.0.0-beta.53",
+    "@electron-forge/maker-dmg": "^6.0.0-beta.53",
     "@electron-forge/maker-rpm": "6.0.0-beta.53",
     "@electron-forge/maker-squirrel": "6.0.0-beta.53",
     "@electron-forge/maker-zip": "6.0.0-beta.53",

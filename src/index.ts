@@ -6,10 +6,6 @@ import crypto from 'crypto';
 
 import express from 'express';
 import expressSession from 'express-session';
-import { loginGachon } from './gachon/login';
-import { GachonLoginSession, GachonUserData } from './gachon/interface';
-import { getTimetable } from './gachon/timetable';
-import { CookieJar } from 'tough-cookie';
 
 import axios from 'axios';
 import { default as axiosCookieJarSupport } from 'axios-cookiejar-support';

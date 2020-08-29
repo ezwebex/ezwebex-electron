@@ -26,7 +26,7 @@ jobs:
         uses: actions/setup-node@v1.4.3
         with:
           # Version Spec of the version to use.  Examples: 10.x, 10.15.1, >=10.15.0
-          node-version: 12.x
+          node-version: 14.x
           
       - name: Install yarn
         run: npm install -g yarn
@@ -39,13 +39,16 @@ jobs:
       
       - name: Compiling!
         run: yarn package
+
+      - name: Packaging!
+        run: yarn make
     
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.1.4
         with:
           name: win32 build 
           # A file, directory or wildcard pattern that describes what to upload
-          path: ./out/
+          path: ./out/make/
           # The desired behavior if no files are found using the provided path
   
   build_macos:
@@ -61,7 +64,7 @@ jobs:
         uses: actions/setup-node@v1.4.3
         with:
           # Version Spec of the version to use.  Examples: 10.x, 10.15.1, >=10.15.0
-          node-version: 12.x
+          node-version: 14.x
 
       - name: Install yarn
         run: npm install -g yarn
@@ -69,18 +72,33 @@ jobs:
       - name: Install all dependencies
         run: yarn
 
+      - name: Build TIFF
+        run: |
+          tiffutil -cathidpicheck ./res/macOS/installation-background.png ./res/macOS/installation-background@2x.png -out ./res/macOS/installation-background.tiff
+      
+      - name: Build Icons
+        run: |
+          cd ./res/icon/
+          wget https://raw.githubusercontent.com/bitboss-ca/png2icns/master/png2icns.sh
+          chmod +x png2icns.sh
+          ./png2icns.sh ezwebex-icon.png
+          cd ../../
+
       - name: Run typescript compile
         run: yarn tsc
 
       - name: Compiling!
         run: yarn package
 
+      - name: Packaging!
+        run: yarn make
+
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.1.4
         with:
           name: macOS Build 
           # A file, directory or wildcard pattern that describes what to upload
-          path: ./out/
+          path: ./out/make/
           # The desired behavior if no files are found using the provided path
 
   build_linux:
@@ -96,7 +114,7 @@ jobs:
         uses: actions/setup-node@v1.4.3
         with:
           # Version Spec of the version to use.  Examples: 10.x, 10.15.1, >=10.15.0
-          node-version: 12.x
+          node-version: 14.x
 
       - name: Install yarn
         run: npm install -g yarn
@@ -106,9 +124,12 @@ jobs:
 
       - name: Run typescript compile
         run: yarn tsc
-        
+
       - name: Compiling!
         run: yarn package
+
+      - name: Packaging!
+        run: yarn make
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.1.4
