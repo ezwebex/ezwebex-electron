@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, Notification } from 'electron';
 import path from 'path';
 import cors from 'cors';
 
@@ -70,5 +70,13 @@ expressApp.use(expressSession({
 registerRouter(expressApp);
 registerShellRouter(expressApp);
 
-// 이스터에그: 이길여길여 -> 이-일-오-일-오
-expressApp.listen(21515, "localhost");
+try {
+  // 이스터에그: 이길여길여 -> 이-일-오-일-오
+  expressApp.listen(21515, "localhost");
+} catch(e) {
+  const portTakenAlert = new Notification({
+    title: "오류!",
+    body: "EzWebEx에서 사용하기 위한 21515 포트가 이미 사용 중이거나,\n이미 EzWebEx가 켜져 있는 것 같습니다. 켜져있는 것으로 간주하고 실행합니다."
+  });
+  portTakenAlert.show();
+}
