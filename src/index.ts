@@ -23,7 +23,7 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
   app.quit();
 }
 
-const menu = [
+const menuTemplate = [
     {
       label: app.name,
       submenu: [
@@ -31,26 +31,29 @@ const menu = [
           role: "about"
         },
         {
+          type: "separator"
+        },
+        {
           label: "GitHub Repository",
           click: () => {
-            shell.openExternal("https://github.com/ezwebex/ezwebex-electron")
+            shell.openExternal("https://github.com/ezwebex/ezwebex-electron");
           }
         },
         {
-          type: "seperator"
+          type: "separator"
         },
         {
           role: "close"
         },
         {
           role: "quit"
-        }
+        },
       ]
-    }
+    },
   ];
 
 // typescript, typing done WRONG, AGAIN.
-const electronMenu = isMac ? Menu.buildFromTemplate(menu as any) : null;
+const electronMenu = isMac ? Menu.buildFromTemplate(menuTemplate as any) : null;
 Menu.setApplicationMenu(electronMenu);
 
 const createWindow = (): void => {
