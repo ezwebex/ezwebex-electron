@@ -26,6 +26,8 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
+            "iconUrl": "./res/icon/ezwebex-icon.ico",
+            "loadingUrl": "./res/Windows/installing.gif"
           }
         },
         {
