@@ -45,8 +45,7 @@
               }
             },
             "icon": "./res/icon/ezwebex-icon.icns",
-            "background": "./res/macOS/installation-background.tiff",
-            "loadingGif": "https://webex.g-c.kr/installing.gif"
+            "background": "./res/macOS/installation-background.tiff"
           }
         },
         {
