@@ -27,7 +27,7 @@
           "name": "@electron-forge/maker-squirrel",
           "config": {
             "name": "ezwebex_electron",
-            "iconUrl": "./res/icon/ezwebex-icon.ico"
+            "iconUrl": ".\\res\\icon\\ezwebex-icon.ico"
           }
         },
         {
