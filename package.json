@@ -1,7 +1,7 @@
 {
   "name": "ezwebex-electron",
   "productName": "ezwebex-electron",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Easy to use Student Experience for Cisco Webex®, Now extended to Windows, macOS, Linux Platforms!",
   "main": "dist/index.js",
   "scripts": {
