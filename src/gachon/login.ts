@@ -3,7 +3,8 @@ import tough from 'tough-cookie';
 import LoginCredentials from './interface';
 
 export async function loginGachon(credentials: LoginCredentials) {
-  const {username, password} = credentials;
+  const username = encodeURIComponent(credentials.username);
+  const password = encodeURIComponent(credentials.password);
 
   const jar = new tough.CookieJar();
 
