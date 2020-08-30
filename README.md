@@ -1,6 +1,9 @@
 # ezwebex-electron
 가천대학교 재학생을 위한 시간표 연동 웹엑스 게이트웨이 서비스 입니다.
 
+## 빌드 상태
+![CI](https://github.com/ezwebex/ezwebex-electron/workflows/CI/badge.svg)
+
 ## 수동 빌드 방법
 
 ### 빌드 환경 설정
