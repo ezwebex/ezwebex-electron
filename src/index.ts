@@ -39,6 +39,9 @@ const menuTemplate = [
             shell.openExternal("https://github.com/ezwebex/ezwebex-electron");
           }
         },
+        { 
+          role: "toggledevtools"
+        },
         {
           type: "separator"
         },
@@ -53,7 +56,7 @@ const menuTemplate = [
   ];
 
 // typescript, typing done WRONG, AGAIN.
-const electronMenu = isMac ? Menu.buildFromTemplate(menuTemplate as any) : null;
+const electronMenu = Menu.buildFromTemplate(menuTemplate as any);
 Menu.setApplicationMenu(electronMenu);
 
 const createWindow = (): void => {
