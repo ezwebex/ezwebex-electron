@@ -32,8 +32,8 @@ export async function getTimetable(jar: tough.CookieJar, date: Date) {
     }
 
     if (dateStringJSON === subject.LECT_YMD) {
-      if (!subject.FROM_HM) subject.FROM_HM = "0000";
-      if (!subject.TO_HM) subject.TO_HM = "0000";
+      if (!subject.FROM_HM) subject.FROM_HM = "9999";
+      if (!subject.TO_HM) subject.TO_HM = "9999";
 
       timetable.push({
         name: subject.LECT_NM,

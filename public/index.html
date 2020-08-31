@@ -273,8 +273,8 @@
                 linkShow = `<a href="#" onclick="callBrowser('${professorLink}')">접속</a>`;
               }
 
-              const startTime = table.startTime || table.startTime === "0000" ? `${table.startTime.substr(0,2)}:${table.startTime.substr(2,2)}` : "알 수 없음";
-              const endTime = table.endTime || table.endTime === "0000" ? `${table.endTime.substr(0,2)}:${table.endTime.substr(2,2)}` : "알 수 없음";
+              const startTime = table.startTime && table.startTime !== "9999" ? `${table.startTime.substr(0,2)}:${table.startTime.substr(2,2)}` : "알 수 없음";
+              const endTime = table.endTime && table.endTime !== "9999" ? `${table.endTime.substr(0,2)}:${table.endTime.substr(2,2)}` : "알 수 없음";
 
               tableData += `
               <tr>
