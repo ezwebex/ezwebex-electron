@@ -3,6 +3,7 @@ import { GachonLoginSession, GachonUserData } from '../gachon/interface';
 import { loginGachon } from '../gachon/login';
 import { getTimetable } from '../gachon/timetable';
 import { CookieJar } from 'tough-cookie';
+import axios from 'axios';
     
 const sessions: {
   [a: string]: GachonLoginSession;
@@ -123,6 +124,44 @@ export function registerRouter(app: Application) {
         success: true,
         data: timetableRes
       });
+    } catch(e) {
+      res.status(403);
+      console.error(e);
+      res.send({
+        success: false,
+        error: e
+      })
+    }
+  });
+
+  app.get('/get_webex', async (req, res) => {
+
+    const { year, semester, subjectCode, professorCode } = req.query;
+    const date = new Date();
+
+    try {
+
+      const url = `http://sg.gachon.ac.kr/main?attribute=lectPlan&year=${year}&hakgi=${semester}&p_subject_cd=${subjectCode}&p_member_no=${professorCode}&lang=ko&fake=${date}`;
+
+      const data = await axios.get(url);
+
+      const webexLinkRegex = /(http|https):\/\/gachon.webex.com\/(webappng\/sites\/gachon\/dashboard\/pmr\/|meet\/)([A-Za-z0-9\._-]+)/g;
+
+      const content = data.data;
+      
+      const parsed = webexLinkRegex.exec(content);
+
+      console.log(parsed);
+
+      if (parsed !== null) {
+        res.send({
+          success: true,
+          data: "https://gachon.webex.com/meet/"+parsed[3]
+        });
+      } else {
+        console.log(content);
+        throw new Error("수강신청 서버에서 웹엑스 주소를 찾을 수 없었습니다!");
+      }
     } catch(e) {
       res.status(403);
       console.error(e);
