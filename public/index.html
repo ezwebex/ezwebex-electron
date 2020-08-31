@@ -45,7 +45,7 @@
 
       <div id="timetable_screen" style="display: none;">
           <div class="container mt-3" id="login_screen">
-            <p>환영합니다! <span class="gachon_name">{성명}</span>님! <a href="javascript:signingOut()">로그아웃</a></p>
+            <p>환영합니다! <span class="gachon_name">{성명}</span>님! <a href="javascript:signingOut(true)">로그아웃</a></p>
             <h1 class="heading-3" id="timetable_date">2020년 12월 31일</h1>
             <p><a href="javascript:goPrevDate()">이전</a> 
               <a href="javascript:goNextDate()">다음</a> / <a href="javascript:refreshThisDate()">새로고침</a></p>
@@ -155,15 +155,19 @@
       }
     }
 
-    function signingOut() {
+    function signingOut(clearCredentials) {
+
       loggedIn = false;
 
       loginScreen.style.display = "block";
       timetableScreen.style.display = "none";
 
-      localStorage.removeItem("credentials");
-      loginFormUsername.value = "";
-      loginFormPassword.value = "";
+      if (clearCredentials) {
+        localStorage.removeItem("credentials");
+        loginFormUsername.value = "";
+        loginFormPassword.value = "";
+      }
+      
     }
 
     async function requestGachonLogin(credentials, callback) {
