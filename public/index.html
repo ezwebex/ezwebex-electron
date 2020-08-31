@@ -35,6 +35,7 @@
                               <input id="password" class="form-control mb-2" type="password" placeholder="비밀번호" autocomplete="password"/>
                               <button class="btn btn-primary form-control mb-4">로그인</button>
                               <p class="text-muted mt-2">안심하세요! 아이디 비밀번호와 세션 정보는 이 컴퓨터에만 저장되며 <br><b>가천대학교 출석체크 서버에 로그인 하는 용도 외로는 사용되지 않습니다.</b></p>
+                              <p class="text-muted mt-2">기본적으로 로그인 시 자동 로그인이 설정 됩니다. 원치 않다면, 사용 후 로그아웃을 필히 눌러주세요.</p>
                           </form>
                       </div>
                   </div>
@@ -44,7 +45,7 @@
 
       <div id="timetable_screen" style="display: none;">
           <div class="container mt-3" id="login_screen">
-            <p>환영합니다! <span class="gachon_name">{성명}</span>님!</p>
+            <p>환영합니다! <span class="gachon_name">{성명}</span>님! <a href="javascript:signingOut()">로그아웃</a></p>
             <h1 class="heading-3" id="timetable_date">2020년 12월 31일</h1>
             <p><a href="javascript:goPrevDate()">이전</a> 
               <a href="javascript:goNextDate()">다음</a> / <a href="javascript:refreshThisDate()">새로고침</a></p>
@@ -76,7 +77,7 @@
             <li class="list-inline-item"><a href="javascript:callBrowser('https://att.gachon.ac.kr')">가천대학교 출석체크</a></li>
             <li class="list-inline-item"><a href="javascript:callBrowser('https://webex.g-c.kr/notice/')">EzWebEx 공지사항 시스템</a></li>
         </ul>
-          <p class="copyright">ezWebex for Desktop<br />Version. <span id="dev-version">1.1.0-DEVPREVIEW</span></p>
+          <p class="copyright">ezWebex for Desktop<br />Version. <span id="dev-version">1.2.0-DEVPREVIEW</span></p>
       </footer>
   </body>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
@@ -101,14 +102,46 @@
 
     let currentDate = new Date();
 
+    let loggingIn = false;
+
     loginForm.addEventListener("submit", (e) => {
         e.preventDefault();
 
         credentials.username = loginFormUsername.value;
         credentials.password = loginFormPassword.value;
 
-        requestGachonLogin(credentials);
+        requestGachonLogin(credentials, () => {
+          console.log(loggedIn);
+          if (loggedIn) {
+            localStorage.setItem("credentials", JSON.stringify(credentials));
+          }
+        });
     });
+
+
+    // auto login
+    console.log("autologin triggered!");
+    if (localStorage.getItem("credentials") !== null) {
+      const raw = localStorage.getItem("credentials");
+      const json = JSON.parse(raw);
+
+      const username = json.username;
+      loginFormUsername.value = username;
+
+      const password = json.password;
+      loginFormPassword.value = password;
+
+      credentials.username = username;
+      credentials.password = password;
+
+      requestGachonLogin(credentials, () => {
+          console.log(loggedIn);
+          if (loggedIn) {
+            localStorage.setItem("credentials", JSON.stringify(credentials));
+          }
+        });
+    }
+    // auto login end
 
     function signingIn() {
       loggedIn = true;
@@ -127,10 +160,13 @@
 
       loginScreen.style.display = "block";
       timetableScreen.style.display = "none";
+
+      localStorage.removeItem("credentials");
+      loginFormUsername.value = "";
+      loginFormPassword.value = "";
     }
 
-    let loggingIn = false;
-    async function requestGachonLogin(credentials) {
+    async function requestGachonLogin(credentials, callback) {
         if (loggingIn) return;
         loggingIn = true;
 
@@ -165,6 +201,10 @@
 
         notifyDiv.innerHTML = "";
         loggingIn = false;
+
+        if (callback) {
+          callback(userData);
+        }
     }
 
     let isLoadingTimetable = false;
