@@ -1,7 +1,7 @@
 {
   "name": "ezwebex-electron",
   "productName": "ezwebex-electron",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Easy to use Student Experience for Cisco Webex®, Now extended to Windows, macOS, Linux Platforms!",
   "main": "dist/index.js",
   "scripts": {
@@ -50,11 +50,8 @@
         },
         {
           "name": "@electron-forge/maker-deb",
-          "config": {
-          },
-          "platforms": [
-
-          ]
+          "config": {},
+          "platforms": []
         },
         {
           "name": "@electron-forge/maker-rpm",
